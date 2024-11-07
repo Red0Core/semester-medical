@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from ui.manage_patients_ui import PatientAdminUI
 
-class AdminUI:
+class AdminUI(tk.Toplevel):
     def __init__(self, root):
         self.root = root
         self.root.title("Администратор - Управление")
