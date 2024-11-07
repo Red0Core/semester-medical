@@ -36,8 +36,4 @@ class MainApp(tk.Tk):
             print(f"Попытка входа: {username} с паролем: {password}")
         else:
             messagebox.showwarning("Предупреждение", "Логин и пароль не могут быть пустыми.")
-
-if __name__ == "__main__":
-    app = MainApp()
-    app.mainloop()
-    
+            
