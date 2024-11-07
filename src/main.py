@@ -6,8 +6,6 @@ from user import User, Role
 from ui.main_ui import MainApp
 
 if __name__ == "__main__":
-    root = tk.Tk()
-
     create_tables("healthcare.db")
 
     user_repository = UserRepository("healthcare.db")
@@ -28,5 +26,5 @@ if __name__ == "__main__":
     for i in user_repository.get_all_users():
         print(i)    
 
-    app = MainApp(root)
-    root.mainloop()
+    app = MainApp()
+    app.mainloop()
