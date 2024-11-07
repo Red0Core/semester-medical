@@ -39,7 +39,7 @@ def create_tables(db_name):
     with DatabaseConnection(db_name) as db:
         cursor = db.cursor()
 
-            # Включаем поддержку внешних ключей
+        # Включаем поддержку внешних ключей
         cursor.execute("PRAGMA foreign_keys = ON")
 
         cursor.execute("""
@@ -72,8 +72,7 @@ def create_tables(db_name):
 
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS medical_records (
-            record_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            patient_id INTEGER NOT NULL,
+            patient_id INTEGER PRIMARY KEY,
             record TEXT,
             FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE
         )
@@ -89,3 +88,8 @@ def create_tables(db_name):
             FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE
         )
         """)
+
+        cursor.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_patient_id ON medical_records(patient_id)
+        """)
+        
