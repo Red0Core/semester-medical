@@ -17,6 +17,8 @@ class MainApp(tk.Tk):
         self.exit_button = ttk.Button(self, text="Выйти", command=self.destroy)
         self.exit_button.pack(pady=5)
 
+        AdminUI()
+
     def open_login(self):
         username = simpledialog.askstring("Вход", "Введите логин:")
         password = simpledialog.askstring("Вход", "Введите пароль:", show='*')

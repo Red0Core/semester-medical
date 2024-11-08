@@ -122,7 +122,7 @@ class PatientRepository:
 
             cursor.execute("""
                 INSERT INTO users (username, password, role) VALUES (?, ?, ?)
-            """, (username, password, Role.PATIENT))
+            """, (username, password, Role.PATIENT.value))
             
             # Получаем сгенерированный user_id
             user_id = cursor.lastrowid
@@ -183,7 +183,7 @@ class DoctorRepository:
 
             cursor.execute("""
                 INSERT INTO users (username, password, role) VALUES (?, ?, ?)
-            """, (username, password, Role.DOCTOR))
+            """, (username, password, Role.DOCTOR.value))
             
             # Получаем сгенерированный user_id
             user_id = cursor.lastrowid
