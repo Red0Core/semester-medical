@@ -94,10 +94,35 @@ class PatientRepository:
             return cursor.fetchone()
         
     @handle_db_errors()
-    def update_patient(self, patient_id, name):
+    def update_patient(self, patient_id, name, username="", password=""):
         with DatabaseConnection(self.db_name) as conn:
             cursor = conn.cursor()
             cursor.execute("UPDATE patients SET name = ? WHERE patient_id = ?", (name, patient_id))
+
+            # Получение user_id пациента
+            cursor.execute("SELECT user_id FROM patients WHERE patient_id = ?", (patient_id,))
+            user_id = cursor.fetchone()
+            if user_id and username and password:
+                user_id = user_id['user_id']  # Извлечение user_id из результата запроса
+                
+                # Обновление имени пользователя и пароля, если они предоставлены
+                if username is not None:
+                    cursor.execute("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
+                if password is not None:
+                    cursor.execute("UPDATE users SET password = ? WHERE user_id = ?", (password, user_id))
+        
+    @handle_db_errors()
+    def get_patient_login_data(self, patient_id):
+        with DatabaseConnection(self.db_name) as conn:
+            cursor = conn.cursor()
+            
+            # Получение user_id пациента
+            cursor.execute("SELECT user_id FROM patients WHERE patient_id = ?", (patient_id,))
+            user_id = cursor.fetchone()
+
+            # Получаем входные данные
+            cursor.execute("SELECT username, password FROM users WHERE user_id = ?", (user_id['user_id'],))
+            return cursor.fetchone()
 
     @handle_db_errors()
     def delete_patient(self, patient_id):
