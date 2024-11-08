@@ -28,6 +28,7 @@ class DatabaseConnection:
     def __enter__(self):
         self.connection = sqlite3.connect(self.db_name)
         self.connection.row_factory = dict_factory  # возвращает строки в виде словаря
+        self.connection.cursor().execute("PRAGMA foreign_keys = ON")
         return self.connection
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -38,9 +39,6 @@ class DatabaseConnection:
 def create_tables(db_name):
     with DatabaseConnection(db_name) as db:
         cursor = db.cursor()
-
-        # Включаем поддержку внешних ключей
-        cursor.execute("PRAGMA foreign_keys = ON")
 
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -84,7 +82,7 @@ def create_tables(db_name):
             doctor_id INTEGER,
             patient_id INTEGER,
             appointment_time TEXT NOT NULL,  -- Используйте ISO 8601 строку
-            FOREIGN KEY (doctor_id) REFERENCES doctors(id) ON DELETE CASCADE,
+            FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id) ON DELETE CASCADE,
             FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE
         )
         """)

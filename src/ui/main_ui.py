@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
-from repositories import UserRepository
+from repositories import UserRepository, Role
 from ui.admin_ui import AdminUI
-from user import Role
 
 class MainApp(tk.Tk):
     def __init__(self):
@@ -30,6 +29,10 @@ class MainApp(tk.Tk):
             if role == Role.ADMIN.value:
                 messagebox.showinfo("Информация", "Успешно вошли с ролью администратора")
                 AdminUI()
+            elif role == Role.DOCTOR.value:
+                messagebox.showinfo("Информация", "Успешно вошли с ролью доктора")
+            elif role == Role.PATIENT.value:
+                messagebox.showinfo("Информация", "Успешно вошли с ролью пациента")
             else:
                 messagebox.showinfo("Информация", "Попытка входа выполнена.")     
                  
