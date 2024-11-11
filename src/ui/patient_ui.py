@@ -1,6 +1,6 @@
-from re import S
 import tkinter as tk
 from tkinter import ttk
+from ui.appointment_ui import AppointmentBookingWindow
 from ui.medical_record_ui import MedicalRecordWindowView
 from repositories import PatientRepository
 
@@ -14,8 +14,11 @@ class PatientUI(tk.Toplevel):
         self.name = patient_info['name']
         self.patient_id = patient_info['patient_id']
 
+        self.title("Меню пациента")
+
         # Обозначение пациента
-        self.title(f"Здравствуйте, {self.name}")
+        self.label = ttk.Label(self, text=f"Здравствуйте, {self.name}")
+        self.label.pack(pady=10)
 
         # Кнопки для просмотра своей карточки
         self.btn_manage_patients = ttk.Button(self, text="Ваша медицинская карта", command=self.view_medical_record)
@@ -39,4 +42,4 @@ class PatientUI(tk.Toplevel):
         """
         Передает вызов окну с записью к врачу
         """
-        pass
+        AppointmentBookingWindow(self.patient_id)

@@ -1,3 +1,4 @@
+import datetime
 from database import DatabaseConnection, handle_db_errors
 from sqlite3 import IntegrityError
 from enum import Enum
@@ -189,10 +190,13 @@ class DoctorRepository:
         self.db_name = db_name
     
     @handle_db_errors()
-    def get_all_doctors(self):
+    def get_all_doctors(self) -> list[dict]:
+        """
+        Возвращает словарь с doctor_id его именем и специальностью
+        """
         with DatabaseConnection(self.db_name) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT doctor_id, name, specialty FROM doctors")
+            cursor.execute("SELECT doctor_id, name, speciality FROM doctors")
             return cursor.fetchall()
         
     @handle_db_errors()
@@ -234,3 +238,35 @@ class DoctorRepository:
             cursor.execute("""
                 INSERT INTO doctors (user_id, name, speciality) VALUES (?, ?, ?)
             """, (user_id, name, speciality))
+
+class AppointmentRepository:
+    def __init__(self, db_name = "healthcare.db"):
+        self.db_name = db_name
+
+    @handle_db_errors()
+    def add_appointment(self, patient_id, doctor_id, appointment_time):
+        with DatabaseConnection(self.db_name) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO appointments (doctor_id, patient_id, appointment_time)
+                VALUES (?, ?, ?)
+            """, (doctor_id, patient_id, appointment_time))
+
+    @handle_db_errors()
+    def get_booked_slots_in_one_day(self, doctor_id, date: datetime.datetime):
+        """
+        Этот метод запрашивает занятые временные интервалы для определенного врача на определенную дату
+
+        :param doctor_id: Айди доктора
+        :param date: Дата, на которую надо найти занятые слоты
+        :return: Возвращает все занятые слоты в формате datetime
+        :rtype: datetime.datetime
+        """
+        with DatabaseConnection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT appointment_time FROM appointments
+                WHERE doctor_id = ? AND DATE(appointment_time) = ?
+            """, (doctor_id, date.isoformat()))
+            booked_slots = [datetime.datetime.fromisoformat(row['appointment_time']) for row in cursor.fetchall()]  # Получаем только время HH:MM
+            return booked_slots

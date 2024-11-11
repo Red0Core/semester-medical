@@ -39,6 +39,9 @@ class DatabaseConnection:
 def create_tables(db_name):
     with DatabaseConnection(db_name) as db:
         cursor = db.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = cursor.fetchall()
+        print("Таблицы в базе данных:", tables)
 
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -54,7 +57,7 @@ def create_tables(db_name):
             doctor_id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             name TEXT NOT NULL,
-            specialty TEXT NOT NULL,
+            speciality TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
         )
         """)
@@ -83,11 +86,11 @@ def create_tables(db_name):
             patient_id INTEGER,
             appointment_time TEXT NOT NULL,  -- Используйте ISO 8601 строку
             FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id) ON DELETE CASCADE,
-            FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE
+            FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE,
+            UNIQUE(doctor_id, appointment_time)  -- Ограничение уникальности
         )
         """)
 
         cursor.execute("""
         CREATE UNIQUE INDEX IF NOT EXISTS idx_patient_id ON medical_records(patient_id)
         """)
-        

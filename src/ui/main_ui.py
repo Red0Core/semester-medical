@@ -18,7 +18,7 @@ class MainApp(tk.Tk):
         self.exit_button = ttk.Button(self, text="Выйти", command=self.destroy)
         self.exit_button.pack(pady=5)
 
-        AdminUI()
+        PatientUI(9).make_appointment()
 
     def open_login(self):
         username = simpledialog.askstring("Вход", "Введите логин:")
@@ -36,10 +36,8 @@ class MainApp(tk.Tk):
             elif role == Role.DOCTOR.value:
                 messagebox.showinfo("Информация", "Успешно вошли с ролью доктора")
             elif role == Role.PATIENT.value:
-                patient_repository = PatientRepository("healthcare.db")
                 messagebox.showinfo("Информация", "Успешно вошли с ролью пациента")
-                patient_repository.get_patient("")
-                PatientUI()
+                PatientUI(user_id)
             else:
                 messagebox.showinfo("Информация", "Попытка входа выполнена.")     
                  
