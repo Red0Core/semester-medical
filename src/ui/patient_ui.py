@@ -1,0 +1,42 @@
+from re import S
+import tkinter as tk
+from tkinter import ttk
+from ui.medical_record_ui import MedicalRecordWindowView
+from repositories import PatientRepository
+
+class PatientUI(tk.Toplevel):
+    def __init__(self, user_id: int):
+        super().__init__()
+
+        self.patient_repository = PatientRepository("healthcare.db")
+        patient_info = self.patient_repository.get_patient_by_user_id(user_id)
+        
+        self.name = patient_info['name']
+        self.patient_id = patient_info['patient_id']
+
+        # Обозначение пациента
+        self.title(f"Здравствуйте, {self.name}")
+
+        # Кнопки для просмотра своей карточки
+        self.btn_manage_patients = ttk.Button(self, text="Ваша медицинская карта", command=self.view_medical_record)
+        self.btn_manage_patients.pack(pady=5)
+
+        # Кнопка для записи к врачу
+        self.btn_view_requests = ttk.Button(self, text="Записаться к врачу", command=self.make_appointment)
+        self.btn_view_requests.pack(pady=5)
+
+        # Кнопка выхода
+        self.btn_exit = ttk.Button(self, text="Выйти", command=self.destroy)
+        self.btn_exit.pack(pady=20)
+
+    def view_medical_record(self):
+        """
+        Передает вызов окну с просмотром мед карты
+        """
+        MedicalRecordWindowView(self.patient_id, self.patient_repository)
+    
+    def make_appointment(self):
+        """
+        Передает вызов окну с записью к врачу
+        """
+        pass

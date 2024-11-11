@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
-from repositories import UserRepository, Role
+from repositories import PatientRepository, UserRepository, Role
+from ui.patient_ui import PatientUI
 from ui.admin_ui import AdminUI
 
 class MainApp(tk.Tk):
@@ -28,13 +29,17 @@ class MainApp(tk.Tk):
             user_repository = UserRepository("healthcare.db")
 
             role = user_repository.authenticate(username, password)
+            user_id = user_repository.find_by_username(username)
             if role == Role.ADMIN.value:
                 messagebox.showinfo("Информация", "Успешно вошли с ролью администратора")
                 AdminUI()
             elif role == Role.DOCTOR.value:
                 messagebox.showinfo("Информация", "Успешно вошли с ролью доктора")
             elif role == Role.PATIENT.value:
+                patient_repository = PatientRepository("healthcare.db")
                 messagebox.showinfo("Информация", "Успешно вошли с ролью пациента")
+                patient_repository.get_patient("")
+                PatientUI()
             else:
                 messagebox.showinfo("Информация", "Попытка входа выполнена.")     
                  

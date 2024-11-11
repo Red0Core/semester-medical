@@ -6,7 +6,6 @@ class AdminUI(tk.Toplevel):
     def __init__(self):
         super().__init__()
         self.title("Администратор - Управление")
-        self.geometry("500x400")
         
         # Заголовок интерфейса
         self.label_title = ttk.Label(self, text="Панель администратора", font=("Arial", 16))
@@ -20,10 +19,6 @@ class AdminUI(tk.Toplevel):
         self.btn_manage_patients = ttk.Button(self, text="Управление пациентами", command=self.manage_patients)
         self.btn_manage_patients.pack(pady=5)
 
-        # Кнопка для просмотра заявок
-        self.btn_view_requests = ttk.Button(self, text="Просмотр заявок пациентов", command=self.medical_records)
-        self.btn_view_requests.pack(pady=5)
-
         # Кнопка выхода
         self.btn_exit = ttk.Button(self, text="Выйти", command=self.destroy)
         self.btn_exit.pack(pady=20)
@@ -35,6 +30,3 @@ class AdminUI(tk.Toplevel):
     def manage_patients(self):
         # Вызов функции управления списком пациентов
         PatientAdminUI()
-    def medical_records(self):
-        # Просмотр медицинских карт
-        messagebox.showinfo("Просмотр заявок", "Здесь будет список заявок пациентов (реализовать в дальнейшем)")

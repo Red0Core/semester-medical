@@ -45,18 +45,18 @@ class UserRepository:
     @handle_db_errors()
     def find_by_username(self, username):
         """
-        Ищет пользователя по логину
+        Ищет user_id по логину
 
         :param username: логин пользователя
-        :return User: None, если нет
+        :return int: user_id или None, если нет
         """
         with DatabaseConnection(self.db_name) as conn:
             cursor = conn.cursor()
             cursor.execute("""
-            SELECT * FROM users WHERE username = ?
+            SELECT user_id FROM users WHERE username = ?
             """, (username,))
             row = cursor.fetchone()
-            return row
+            return row['user_id']
 
     @handle_db_errors()
     def get_all_users(self) -> list[dict]:
@@ -122,6 +122,23 @@ class PatientRepository:
 
             # Получаем входные данные
             cursor.execute("SELECT username, password FROM users WHERE user_id = ?", (user_id['user_id'],))
+            return cursor.fetchone()
+    
+    @handle_db_errors()
+    def get_patient_by_user_id(self, user_id):
+        """
+        Возвращает информацию о пациенте по его user_id.
+
+        :param user_id: Идентификатор пользователя (int), по которому осуществляется поиск пациента.
+        :return: Словарь с информацией о пациенте, содержащий 'patient_id' и 'name', 
+                или None, если пациент не найден.
+        :rtype: Optional[dict]
+        """
+        with DatabaseConnection(self.db_name) as conn:
+            cursor = conn.cursor()
+
+            # Получаем имя и айди пациента по его user_id
+            cursor.execute("SELECT patient_id, name FROM patients WHERE user_id = ?", (user_id,))
             return cursor.fetchone()
 
     @handle_db_errors()
