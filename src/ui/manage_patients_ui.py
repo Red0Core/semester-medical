@@ -1,4 +1,3 @@
-from re import U
 import tkinter as tk
 from tkinter import ttk, messagebox
 from repositories import PatientRepository
@@ -56,7 +55,7 @@ class PatientAdminUI(tk.Toplevel):
         if not record:
             messagebox.showinfo("Медицинская карта", "Медицинская карта отсутствует.")
         else:
-            MedicalRecordWindow(patient_id, self.patient_repository)
+            MedicalRecordWindowView(patient_id, self.patient_repository)
     
     def edit_medical_card(self):
         """Изменяет медицинскую карту выбранного пациента"""
@@ -86,7 +85,7 @@ class PatientAdminUI(tk.Toplevel):
         patient_login_data = self.patient_repository.get_patient_login_data(patient_id)
 
         # Открываем новое окно для редактирования
-        PatientWindow(self, self.load_patients_to_tree_view, self.patient_repository, patient_id, patient_name,
+        EditPatientWindow(self, self.load_patients_to_tree_view, self.patient_repository, patient_id, patient_name,
                       patient_login_data['username'], patient_login_data['password'])
 
     def delete_patient(self):
@@ -109,9 +108,9 @@ class PatientAdminUI(tk.Toplevel):
         """Добавляет нового пациента и обновляет список"""
 
         # Открываем новое окно для редактирования
-        PatientWindow(self, self.load_patients_to_tree_view, self.patient_repository)
+        EditPatientWindow(self, self.load_patients_to_tree_view, self.patient_repository)
 
-class PatientWindow(tk.Toplevel):
+class EditPatientWindow(tk.Toplevel):
     def __init__(self, master, refresh_callback, patient_repository: PatientRepository,
                   patient_id=None, patient_name="", username="", password="", medical_record=""):
         super().__init__(master)

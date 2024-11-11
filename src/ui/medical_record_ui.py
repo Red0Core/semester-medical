@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox
 
 from repositories import PatientRepository
 
-class MedicalRecordWindow(tk.Toplevel):
+class MedicalRecordWindowView(tk.Toplevel):
     def __init__(self, patient_id, patient_repository: PatientRepository) -> None:
         super().__init__()
         self.title = "Медицинская карта пациента"
@@ -23,7 +23,7 @@ class MedicalRecordWindow(tk.Toplevel):
         self.close_button = ttk.Button(self, text="Закрыть", command=self.destroy)
         self.close_button.pack(pady=5)
 
-class MedicalRecordWindowEdit(MedicalRecordWindow):
+class MedicalRecordWindowEdit(MedicalRecordWindowView):
     def __init__(self, patient_id, patient_repository: PatientRepository):
         super().__init__(patient_id, patient_repository)
 
