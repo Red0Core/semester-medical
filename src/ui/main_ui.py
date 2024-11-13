@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
-from repositories import PatientRepository, UserRepository, Role
+from repositories import UserRepository, Role
 from ui.patient_ui import PatientUI
 from ui.admin_ui import AdminUI
 
@@ -18,7 +18,7 @@ class MainApp(tk.Tk):
         self.exit_button = ttk.Button(self, text="Выйти", command=self.destroy)
         self.exit_button.pack(pady=5)
 
-        PatientUI(9).make_appointment()
+        AdminUI()
 
     def open_login(self):
         username = simpledialog.askstring("Вход", "Введите логин:")

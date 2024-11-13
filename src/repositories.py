@@ -95,7 +95,7 @@ class PatientRepository:
             return cursor.fetchone()
         
     @handle_db_errors()
-    def update_patient(self, patient_id, name, username="", password=""):
+    def update_patient(self, patient_id, name, username=None, password=None):
         with DatabaseConnection(self.db_name) as conn:
             cursor = conn.cursor()
             cursor.execute("UPDATE patients SET name = ? WHERE patient_id = ?", (name, patient_id))
@@ -238,6 +238,36 @@ class DoctorRepository:
             cursor.execute("""
                 INSERT INTO doctors (user_id, name, speciality) VALUES (?, ?, ?)
             """, (user_id, name, speciality))
+    
+    @handle_db_errors()
+    def get_doctor_login_data(self, doctor_id):
+        with DatabaseConnection(self.db_name) as conn:
+            cursor = conn.cursor()
+            
+            # Получение user_id пациента
+            cursor.execute("SELECT user_id FROM doctors WHERE doctor_id = ?", (doctor_id,))
+            user_id = cursor.fetchone()
+
+            # Получаем входные данные
+            cursor.execute("SELECT username, password FROM users WHERE user_id = ?", (user_id['user_id'],))
+            return cursor.fetchone()
+        
+    @handle_db_errors()
+    def update_doctor(self, doctor_id, name, speciality, username=None, password=None):
+        with DatabaseConnection(self.db_name) as conn:
+            cursor = conn.cursor()
+            cursor.execute("UPDATE doctors SET name = ?, speciality = ? WHERE doctor_id = ?", (name, speciality, doctor_id))
+            # Получение user_id пациента
+            cursor.execute("SELECT user_id FROM doctors WHERE doctor_id = ?", (doctor_id,))
+            user_id = cursor.fetchone()
+            if user_id and username and password:
+                user_id = user_id['user_id']  # Извлечение user_id из результата запроса
+                
+                # Обновление имени пользователя и пароля, если они предоставлены
+                if username is not None:
+                    cursor.execute("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
+                if password is not None:
+                    cursor.execute("UPDATE users SET password = ? WHERE user_id = ?", (password, user_id))
 
 class AppointmentRepository:
     def __init__(self, db_name = "healthcare.db"):

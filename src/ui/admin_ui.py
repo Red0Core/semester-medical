@@ -1,6 +1,7 @@
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import ttk
 from ui.manage_patients_ui import PatientAdminUI
+from ui.manage_doctors_ui import DoctorAdminUI
 
 class AdminUI(tk.Toplevel):
     def __init__(self):
@@ -25,7 +26,7 @@ class AdminUI(tk.Toplevel):
 
     def manage_doctors(self):
         # Вызов функции управления списком врачей
-        messagebox.showinfo("Управление врачами", "Открывается окно управления врачами (реализовать в дальнейшем)")
+        DoctorAdminUI()
 
     def manage_patients(self):
         # Вызов функции управления списком пациентов
