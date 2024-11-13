@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from tkcalendar import DateEntry  # Нужно установить tkcalendar для выбора даты
-from repositories import DoctorRepository, AppointmentRepository  # Предполагается, что есть PatientRepository с нужными методами
+from repositories import AppointmentRepository  # Предполагается, что есть PatientRepository с нужными методами
 
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 
 def generate_time_slots(start_time="10:00", end_time="18:00", interval_minutes=10, booked_slots_in_date: list | None=None, date=datetime.today()):
     if booked_slots_in_date is None:
@@ -31,15 +31,17 @@ def generate_time_slots(start_time="10:00", end_time="18:00", interval_minutes=1
     return time_slots
 
 class AppointmentBookingWindow(tk.Toplevel):
-    def __init__(self, patient_id):
+    def __init__(self, patient_id,
+                 appointment_repository: AppointmentRepository,
+                 fetch_doctors):
         super().__init__()
         self.patient_id = patient_id
-        self.appointment_repository = AppointmentRepository("healthcare.db")
-        self.doctor_repository = DoctorRepository("healthcare.db")
+        self.appointment_repository = appointment_repository
+        self.get_all_doctors = fetch_doctors
         self.title("Запись к врачу")
 
         # Выбор врача
-        self.doctors = self.doctor_repository.get_all_doctors()
+        self.doctors = self.get_all_doctors()
         self.doctor_combobox = ttk.Combobox(self, values=[f"{doc['name']} - {doc['speciality']}" for doc in self.doctors])
         self.doctor_combobox.set("Выберите врача")
         self.doctor_combobox.pack(pady=10, fill=tk.X)

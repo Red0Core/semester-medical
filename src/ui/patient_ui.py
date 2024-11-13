@@ -2,13 +2,15 @@ import tkinter as tk
 from tkinter import ttk
 from ui.appointment_ui import AppointmentBookingWindow
 from ui.medical_record_ui import MedicalRecordWindowView
-from repositories import PatientRepository
+from repositories import AppointmentRepository, PatientRepository
 
 class PatientUI(tk.Toplevel):
-    def __init__(self, user_id: int):
+    def __init__(self, user_id: int, patient_repository: PatientRepository, appointment_repository: AppointmentRepository, fetch_doctors_func):
         super().__init__()
 
-        self.patient_repository = PatientRepository("healthcare.db")
+        self.patient_repository = patient_repository
+        self.appointment_repository = appointment_repository
+        self.fetch_doctors = fetch_doctors_func
         patient_info = self.patient_repository.get_patient_by_user_id(user_id)
         
         self.name = patient_info['name']
@@ -42,4 +44,4 @@ class PatientUI(tk.Toplevel):
         """
         Передает вызов окну с записью к врачу
         """
-        AppointmentBookingWindow(self.patient_id)
+        AppointmentBookingWindow(self.patient_id, self.appointment_repository, fetch_doctors=self.fetch_doctors)

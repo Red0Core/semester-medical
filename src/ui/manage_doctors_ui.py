@@ -3,11 +3,11 @@ from tkinter import ttk, messagebox
 from repositories import DoctorRepository
 
 class DoctorAdminUI(tk.Toplevel):
-    def __init__(self):
+    def __init__(self, repository: DoctorRepository):
         super().__init__()
         self.title("Список врачей")
 
-        self.doctor_repository = DoctorRepository("healthcare.db")
+        self.doctor_repository = repository
 
         # Создаем виджет Treeview
         self.tree = ttk.Treeview(self, columns=("ID", "Name", "Speciality"), show="headings")

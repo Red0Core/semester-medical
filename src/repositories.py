@@ -268,6 +268,23 @@ class DoctorRepository:
                     cursor.execute("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
                 if password is not None:
                     cursor.execute("UPDATE users SET password = ? WHERE user_id = ?", (password, user_id))
+    
+    @handle_db_errors()
+    def get_doctor_by_user_id(self, user_id):
+        """
+        Возвращает информацию о докторе по его user_id.
+
+        :param user_id: Идентификатор пользователя (int), по которому осуществляется поиск доктора.
+        :return: Словарь с информацией о докторе, содержащий 'doctor_id' и 'name', 
+                или None, если докторпациент не найден.
+        :rtype: Optional[dict]
+        """
+        with DatabaseConnection(self.db_name) as conn:
+            cursor = conn.cursor()
+
+            # Получаем имя и айди пациента по его user_id
+            cursor.execute("SELECT doctor_id, name, speciality FROM doctors WHERE user_id = ?", (user_id,))
+            return cursor.fetchone()
 
 class AppointmentRepository:
     def __init__(self, db_name = "healthcare.db"):
@@ -300,3 +317,30 @@ class AppointmentRepository:
             """, (doctor_id, date.isoformat()))
             booked_slots = [datetime.datetime.fromisoformat(row['appointment_time']) for row in cursor.fetchall()]  # Получаем только время HH:MM
             return booked_slots
+    
+    @handle_db_errors()
+    def get_appointments_by_doctor_id(self, doctor_id):
+        """
+        Этот метод запрашивает все записи для конкретного доктора
+
+        :param doctor_id: Айди доктора
+        :return: Записи в формате словаря с ключами 'patient_id', 'name', 'appointment_time', где name это имя пациента
+        :rtype: dict
+        """
+        with DatabaseConnection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT patient_id, appointment_time FROM appointments WHERE doctor_id = ?
+            """, (doctor_id,))
+
+            appointments = []
+            for row in cursor.fetchall():
+                cursor.execute("""
+                    SELECT name FROM patients WHERE patient_id = ?
+                """, (row['patient_id'],))
+                patient_name = cursor.fetchone()['name']
+                appointments.append(dict(patient_id=row['patient_id'],
+                                         name=patient_name,
+                                         appointment_time=row['appointment_time']))
+                
+            return appointments

@@ -1,13 +1,17 @@
 import tkinter as tk
 from tkinter import ttk
+from repositories import DoctorRepository, PatientRepository
 from ui.manage_patients_ui import PatientAdminUI
 from ui.manage_doctors_ui import DoctorAdminUI
 
 class AdminUI(tk.Toplevel):
-    def __init__(self):
+    def __init__(self, doctor_repository: DoctorRepository, patient_repository: PatientRepository):
         super().__init__()
         self.title("Администратор - Управление")
         
+        self.doctor_repository = doctor_repository
+        self.patient_repository = patient_repository
+
         # Заголовок интерфейса
         self.label_title = ttk.Label(self, text="Панель администратора", font=("Arial", 16))
         self.label_title.pack(pady=10)
@@ -26,8 +30,8 @@ class AdminUI(tk.Toplevel):
 
     def manage_doctors(self):
         # Вызов функции управления списком врачей
-        DoctorAdminUI()
+        DoctorAdminUI(self.doctor_repository)
 
     def manage_patients(self):
         # Вызов функции управления списком пациентов
-        PatientAdminUI()
+        PatientAdminUI(self.patient_repository)

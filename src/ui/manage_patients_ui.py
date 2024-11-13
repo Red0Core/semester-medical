@@ -4,11 +4,11 @@ from repositories import PatientRepository
 from ui.medical_record_ui import *
 
 class PatientAdminUI(tk.Toplevel):
-    def __init__(self):
+    def __init__(self, repository: PatientRepository):
         super().__init__()
         self.title("Список пациентов")
 
-        self.patient_repository = PatientRepository("healthcare.db")
+        self.patient_repository = repository
 
         # Создаем виджет Treeview
         self.tree = ttk.Treeview(self, columns=("ID", "Name"), show="headings")
@@ -21,13 +21,11 @@ class PatientAdminUI(tk.Toplevel):
         self.edit_button = ttk.Button(self, text="Редактировать", command=self.edit_patient)
         self.delete_button = ttk.Button(self, text="Удалить", command=self.delete_patient)
         self.add_button = ttk.Button(self, text="Добавить", command=self.add_patient)
-        self.edit_medical_button = ttk.Button(self, text="Изменить карту", command=self.edit_medical_card)
 
         self.view_button.pack(side=tk.LEFT, padx=5, pady=5)
         self.edit_button.pack(side=tk.LEFT, padx=5, pady=5)
         self.delete_button.pack(side=tk.LEFT, padx=5, pady=5)
         self.add_button.pack(side=tk.LEFT, padx=5, pady=5)
-        self.edit_medical_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         # Загрузка данных
         self.load_patients_to_tree_view()
@@ -56,21 +54,6 @@ class PatientAdminUI(tk.Toplevel):
             messagebox.showinfo("Медицинская карта", "Медицинская карта отсутствует.")
         else:
             MedicalRecordWindowView(patient_id, self.patient_repository)
-    
-    def edit_medical_card(self):
-        """Изменяет медицинскую карту выбранного пациента"""
-        selected_item = self.tree.selection()
-        if not selected_item:
-            messagebox.showwarning("Ошибка", "Выберите пациента для просмотра.")
-            return
-
-        patient_id = self.tree.item(selected_item[0])["values"][0]
-        record = self.patient_repository.get_patient_record(patient_id)
-        # Если нет медицинской карты, то мы пустую сделаем
-        if not record:
-            self.patient_repository.update_medical_record(patient_id, "")
-
-        MedicalRecordWindowEdit(patient_id, self.patient_repository)
 
     def edit_patient(self):
         """Открывает окно для редактирования информации о пациенте."""
