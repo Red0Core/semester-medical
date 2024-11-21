@@ -85,7 +85,18 @@ class PatientRepository:
         with DatabaseConnection(self.db_name) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT record FROM medical_records WHERE patient_id = ?", (patient_id,))
-            return cursor.fetchone()
+            res = cursor.fetchone()
+            # Если еще не создана запись, то создается пустая
+            if res is None:
+                cursor.execute("""
+                INSERT INTO medical_records (patient_id, record)
+                VALUES (?, ?)
+                ON CONFLICT(patient_id) DO UPDATE SET record = excluded.record
+                """, (patient_id, ""))
+                return {'record': ''}
+
+            return res
+
         
     @handle_db_errors()
     def get_patient(self, patient_id):

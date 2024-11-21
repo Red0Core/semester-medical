@@ -21,7 +21,13 @@ if __name__ == "__main__":
 
     print("Юзеры:")
     for i in user_repository.get_all_users():
-        print(i) 
+        print(i)
+        user_id = i['user_id']
+        role = i['role']
+        if role == Role.DOCTOR.value:
+            print(f"--{doctor_repository.get_doctor_by_user_id(user_id)}\n")
+        if role == Role.PATIENT.value:
+            print(f"--{patient_repository.get_patient_by_user_id(user_id)}\n")
 
     print("Пациенты:")
     for i in patient_repository.get_all_patients():
